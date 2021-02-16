@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html lang="zh">
+    <!-- title -->
+
+
+
+
+<!-- keywords -->
+
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" >
+    <meta name="author" content="IceSandwich">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="IceSandwich">
+    
+    <meta name="keywords" content="programming">
+    
+    <meta name="description" content="">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <title>积分表和差分表的使用 · IceSandwich</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href= "/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <link rel="stylesheet" href= "/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href= "/null" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script" />
+    <link rel="preload" href="/scripts/main.js" as="script" />
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+<meta name="generator" content="Hexo 4.1.0"></head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >IceSandwich</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">积分表和差分表的使用</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>IceSandwich</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style="
+
+
+
+
+
+
+
+height:50vh;
+">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(1.PNG)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            积分表和差分表的使用
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+                总结算法基础
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "算法">算法</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">1.9k</span>阅读时长: <span class="post-count reading-time">7 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2020/07/11</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <p>先上一张图，一目了然</p>
+<p><img src="/2020/07/11/%E7%A7%AF%E5%88%86%E8%A1%A8%E5%92%8C%E5%B7%AE%E5%88%86%E8%A1%A8%E7%9A%84%E4%BD%BF%E7%94%A8/1.PNG" alt></p>
+<h1>积分表</h1>
+<p>一个一维数组A，创建一个同长度的数组Integral，有：</p>
+<p>$$Integral[n] = \sum_{i=0}^n A[n]$$</p>
+<p>可以看到，积分表就是把前n个数加起来，这有什么好处呢？</p>
+<p>积分表的几个特征：</p>
+<ol>
+<li>
+<p><strong>积分表中两数之差，等于原数组相应索引的两数间(左开右闭)所有数之和</strong></p>
+<p>比如：Integral[5]-Integral[2]=31-9=22，而A[3]+A[4]+A[5]=5+10+7=22，两者是相等的</p>
+<p>换句话说，利用积分表，求和运算变成了求两数之差。</p>
+</li>
+<li>
+<p><strong>若A中全为正数，积分表是单调递增的，积分表中最后一项是最大数，第一项是最小数</strong></p>
+<p>很好理解吧，如果都是正数，那肯定越加越大，最后一项肯定最大，第一项肯定最小。</p>
+</li>
+<li>
+<p><strong>若A中全为正数，积分表是从小到大排序的</strong></p>
+<p>跟第2个其实是一样的，但是这个排序性质很重要，我们可以利用这个特征做二分搜索，加快算法。</p>
+</li>
+</ol>
+<h2 id="积分表例题-子序列-poj-3061"><a class="header-anchor" href="#积分表例题-子序列-poj-3061"></a>积分表例题 - 子序列 (POJ 3061)</h2>
+<p>题目：给定长度为n的数列正整数$a_0,a_1,\dots,a_n$以及整数$S$。求出总和不小于$S$的连续子序列的长度的最小值。如果解不存在，则输出0。</p>
+<p>仔细分析题目，发现实质是要求恰好满足$a_s+a_{s+1}+\dots+a_{t-1} \ge S$时的s和t之差。</p>
+<p>求和简单，问题是s和t怎么得到？</p>
+<ol>
+<li>
+<p>暴力法</p>
+<p>s从[0, 9]选取一个数，t从[0, 9]选取一个数，进行排列组合，复杂度$O(n^2)$，不可取</p>
+</li>
+<li>
+<p>积分表</p>
+<p>求积分表sum，则原问题可转成恰好满足$sum[t-1]-sum[s-1] \ge S $时s和t之差。乍一看好像没什么变化，以为s和t还是需要排列组合，其实不然。我们把式子改成这样：$sum[t-1] \ge S + sum[s-1]$ 这样就变成了查找问题了，当定好s后，寻找t使得上面的式子成立即可。根据积分表性质3，这个查找可以用二分搜索得到，因此复杂度为$O(n\log{n})$</p>
+</li>
+<li>
+<p>尺取法</p>
+<p>复杂度可降至$O(n)$，本文不讨论该方法。</p>
+</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* POJ 3061 积分表法 AC代码 */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> sum[<span class="number">100000</span>];</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">solve</span><span class="params">(<span class="keyword">int</span> N, <span class="keyword">int</span> S)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> t;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//Step 1. 计算积分表</span></span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">"%d"</span>, &amp;sum[<span class="number">0</span>]);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; N; ++i) &#123;</span><br><span class="line">        <span class="built_in">scanf</span>(<span class="string">"%d"</span>, &amp;t);</span><br><span class="line">        sum[i] = sum[i<span class="number">-1</span>] + t;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (sum[N<span class="number">-1</span>] &lt; S) <span class="keyword">return</span> <span class="number">0</span>; <span class="comment">//解不存在</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">//Step 2. 定好s，寻找t，保存最小长度</span></span><br><span class="line">    <span class="keyword">int</span> minLen = N;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> s = <span class="number">0</span>; sum[s] + S &lt;= sum[N<span class="number">-1</span>]; ++s) &#123;</span><br><span class="line">        <span class="keyword">int</span> t = lower_bound(sum + s, sum + N, sum[s] + S) - sum;</span><br><span class="line">        minLen = min(minLen, t-s);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//Step 3. 完成</span></span><br><span class="line">    <span class="keyword">return</span> minLen;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> cases, N, S; <span class="built_in">scanf</span>(<span class="string">"%d"</span>, &amp;cases);</span><br><span class="line">    <span class="keyword">while</span> (cases--) &#123;</span><br><span class="line">        <span class="built_in">scanf</span>(<span class="string">"%d%d"</span>, &amp;N, &amp;S);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"%d\n"</span>, solve(N, S));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1>差分表</h1>
+<p>一个一维数组A，创建一个同长度的数组Difference，有：</p>
+<p>$$Difference[n]=A[n]-A[n-1]$$</p>
+<p>值得注意的是，差分表是有符号方向的，+表示递增，-表示递减。</p>
+<p>那差分表又有什么好处呢？</p>
+<p>差分表的性质：</p>
+<ol>
+<li>
+<p><strong>差分表中两数间所有数之和，等于原数组相对于的两数距离(含方向)</strong></p>
+<p>比如：Difference[3]+Difference[4]+Difference[5]=2+5-3=4，A[5]-A[2]=7-3=4，两者是相等的</p>
+<p>也就是说，原数组两者之差，可以转为求和运算拉~</p>
+<p>额这。。。不是搞乱吗？怎么把求差变麻烦了？这个问题我们留到例子中说明。</p>
+</li>
+<li>
+<p><strong>差分表中从1加到最后的结果，等于原数组第一个和最后一个数的距离(含方向)</strong></p>
+<p>其实就是性质1，只是把范围扩大到整个数组了。</p>
+</li>
+</ol>
+<h2 id="差分表例题-最大子数组-算法导论第4章"><a class="header-anchor" href="#差分表例题-最大子数组-算法导论第4章"></a>差分表例题 - 最大子数组（算法导论第4章）</h2>
+<p><img src="/2020/07/11/%E7%A7%AF%E5%88%86%E8%A1%A8%E5%92%8C%E5%B7%AE%E5%88%86%E8%A1%A8%E7%9A%84%E4%BD%BF%E7%94%A8/2.PNG" alt></p>
+<p>仔细看题，实质是求第i天和第j天的高度差最大，并且满足第i天比第j天低。</p>
+<p>可能你会有以下想法：</p>
+<ol>
+<li>求最低值和最高值，两者相减，高度差最大</li>
+<li>求第二低的天，在那之后求最高值所在的位置，作为高度差最大</li>
+<li>求第n低的天，在那之后求最高值所在的位置，求高度差，选择最大高度差的结果作为输出</li>
+</ol>
+<p>以上1、2想法都是错的，原因：</p>
+<ol>
+<li>
+<p>没有考虑第i天比第j天低的情况</p>
+<p>算法求得最低点为绿点，最高点为橙点，但是绿点在橙点后，不符合题目要求。正确是紫点到橙点。</p>
+</li>
+<li>
+<p>没有考虑第二低后面还会有个大跳跃</p>
+<p>第二低的点为绿点，之后最高点为橙点，但是中间的紫点更低，正确是紫点到橙点。</p>
+</li>
+<li>
+<p>算法是正确的，这个就是暴力求解，遍历所有的可能。</p>
+</li>
+</ol>
+<p><img src="/2020/07/11/%E7%A7%AF%E5%88%86%E8%A1%A8%E5%92%8C%E5%B7%AE%E5%88%86%E8%A1%A8%E7%9A%84%E4%BD%BF%E7%94%A8/3.PNG" alt></p>
+<p>可以看到，求高度差最大，其实就是求距离，而且要求低的在前，不就是差分表的方向性嘛。</p>
+<ol>
+<li>
+<p>暴力法</p>
+<p>就是上面的第3个思路，不讲了。</p>
+</li>
+<li>
+<p>差分表+递归</p>
+<p>由性质1，求高度差，即求两数之间所有值的和。乍一看跟积分表的例题有点像，但是这里并没有告诉我们所求的和上限是多少，因此无法用二分搜索。因此这里结合分治思想使用差分表，差分表的结果是上图中价格变化表。</p>
+</li>
+<li>
+<p>动态规划法或尺取法</p>
+<p>复杂度降至$O(n)$，不是本文讨论的内容。</p>
+</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;algorithm&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> N = <span class="number">17</span>;</span><br><span class="line"><span class="keyword">int</span> d[N] = &#123;<span class="number">100</span>,<span class="number">113</span>,<span class="number">110</span>,<span class="number">85</span>,<span class="number">105</span>,<span class="number">102</span>,<span class="number">86</span>,<span class="number">63</span>,<span class="number">81</span>,<span class="number">101</span>,<span class="number">94</span>,<span class="number">106</span>,<span class="number">101</span>,<span class="number">79</span>,<span class="number">94</span>,<span class="number">90</span>,<span class="number">97</span>&#125;;</span><br><span class="line"><span class="keyword">int</span> diff[N] = &#123; <span class="number">0</span> &#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">findMaxCrossingSubArray</span><span class="params">(<span class="keyword">int</span> s, <span class="keyword">int</span> e, <span class="keyword">int</span> mid, <span class="keyword">int</span> &amp;s_output, <span class="keyword">int</span> &amp;e_output, <span class="keyword">int</span> &amp;sum)</span> </span>&#123;</span><br><span class="line">    <span class="comment">//Step 1. 中心往左边拓展，寻找最大和，sum([i, mid])</span></span><br><span class="line">    <span class="keyword">int</span> sum_left = <span class="number">0</span>, max_left = <span class="number">-1000</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = mid; i &gt;= s; --i) &#123;</span><br><span class="line">        sum_left += diff[i];</span><br><span class="line">        <span class="keyword">if</span> (max_left &lt; sum_left) &#123;</span><br><span class="line">            max_left = sum_left;</span><br><span class="line">            s_output = i;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//Step 2. 中心往右边拓展，寻找最大和，sum([i, e])</span></span><br><span class="line">    <span class="keyword">int</span> sum_right = <span class="number">0</span>, max_right = <span class="number">-1000</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = mid+<span class="number">1</span>; i &lt;= e; ++i) &#123;</span><br><span class="line">        sum_right += diff[i];</span><br><span class="line">        <span class="keyword">if</span> (max_right &lt; sum_right) &#123;</span><br><span class="line">            max_right = sum_right;</span><br><span class="line">            e_output = i;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//Step 3. 求最大子数组的和</span></span><br><span class="line">    sum = max_left + max_right;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">findMaxSubArray</span><span class="params">(<span class="keyword">int</span> s, <span class="keyword">int</span> e, <span class="keyword">int</span> &amp;s_output, <span class="keyword">int</span> &amp;e_output, <span class="keyword">int</span> &amp;sum)</span> </span>&#123;</span><br><span class="line">    <span class="meta">#<span class="meta-keyword">define</span> RETURNN(ARGS, ARGE, ARGSUM) &#123; s_output=ARGS; e_output=ARGE; sum=ARGSUM; &#125;</span></span><br><span class="line">    <span class="comment">//Step 1. 递归结束条件</span></span><br><span class="line">    <span class="keyword">if</span> (s == e) &#123;</span><br><span class="line">        RETURNN(s, e, diff[s]);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> mid = (s+e)/<span class="number">2</span>; <span class="comment">//向下取值</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">//Step 2. 对左边、中间、右边寻找最大子数组</span></span><br><span class="line">    <span class="keyword">int</span> s_left, e_left, sum_left;</span><br><span class="line">    findMaxSubArray(s, mid, s_left, e_left, sum_left);</span><br><span class="line">    <span class="keyword">int</span> s_right, e_right, sum_right;</span><br><span class="line">    findMaxSubArray(mid+<span class="number">1</span>, e, s_right, e_right, sum_right);</span><br><span class="line">    <span class="keyword">int</span> s_mid, e_mid, sum_mid;</span><br><span class="line">    findMaxCrossingSubArray(s, e, mid, s_mid, e_mid, sum_mid);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//Step 3. 比较sum_left, sum_right, sum_mid，获取更大的子数组</span></span><br><span class="line">    <span class="keyword">if</span> (sum_left &gt;= sum_right &amp;&amp; sum_left &gt;= sum_mid) &#123;</span><br><span class="line">        RETURNN(s_left, e_left, sum_left);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (sum_right &gt;= sum_left &amp;&amp; sum_right &gt;= sum_mid) &#123;</span><br><span class="line">        RETURNN(s_right, e_right, sum_right);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        RETURNN(s_mid, e_mid, sum_mid);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">//Step 1. 构造差分表</span></span><br><span class="line">    diff[<span class="number">0</span>] = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; N; ++i) &#123;</span><br><span class="line">        diff[i] = d[i] - d[i<span class="number">-1</span>];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//Step2. 求最大子数组</span></span><br><span class="line">    <span class="keyword">int</span> s, e, sum;</span><br><span class="line">    findMaxSubArray(<span class="number">0</span>, N<span class="number">-1</span>, s, e, sum);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"buy in %d, sold out %d, reach %d\n"</span>, s, e, sum);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输出结果是：<code>buy in 8, sold out 11, reach 43</code></p>
+<p>也就是，第7天交易结束后买入，从第8天开始计算收益，到第11天交易结束后卖出，此时收益最大，总收益43美元。</p>
+
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>原文作者：<a href="https://IceSandwich.github.io">IceSandwich</a>
+            <p>原文链接：<a href="https://icesandwich.github.io/2020/07/11/%E7%A7%AF%E5%88%86%E8%A1%A8%E5%92%8C%E5%B7%AE%E5%88%86%E8%A1%A8%E7%9A%84%E4%BD%BF%E7%94%A8/">https://icesandwich.github.io/2020/07/11/%E7%A7%AF%E5%88%86%E8%A1%A8%E5%92%8C%E5%B7%AE%E5%88%86%E8%A1%A8%E7%9A%84%E4%BD%BF%E7%94%A8/</a>
+            <p>发表日期：<a href="https://icesandwich.github.io/2020/07/11/%E7%A7%AF%E5%88%86%E8%A1%A8%E5%92%8C%E5%B7%AE%E5%88%86%E8%A1%A8%E7%9A%84%E4%BD%BF%E7%94%A8/">July 11th 2020, 12:00:00 am</a>
+            <p>更新日期：<a href="https://icesandwich.github.io/2020/07/11/%E7%A7%AF%E5%88%86%E8%A1%A8%E5%92%8C%E5%B7%AE%E5%88%86%E8%A1%A8%E7%9A%84%E4%BD%BF%E7%94%A8/">July 11th 2020, 3:49:38 pm</a>
+            <p>版权声明：本文采用<a rel="license noopener" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
+        </div>
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href= "/2020/07/13/%E4%BC%98%E5%85%88%E7%BA%A7%E6%8E%92%E5%BA%8F/" title= "优先级排序">
+                    <div class="nextTitle">优先级排序</div>
+                </a>
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href= "/2020/07/10/%E8%B6%85%E6%98%9F%E6%B5%8F%E8%A7%88%E9%A1%B5%E9%9D%A2%E8%87%AA%E5%8A%A8%E6%94%BE%E5%A4%A7/" title= "超星浏览页面自动放大">
+                    <div class="prevTitle">超星浏览页面自动放大</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!-- partial('_partial/comment/changyan') -->
+    <!--PC版-->
+
+
+    
+    
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:wire73poc@foxmail.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="https://github.com/IceSandwich" class="iconfont-archer github" target="_blank" title=github></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+    
+     
+    <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+    
+    </div>
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#null"><span class="toc-number">1.</span> <span class="toc-text">积分表</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#积分表例题-子序列-poj-3061"><span class="toc-number">1.1.</span> <span class="toc-text">积分表例题 - 子序列 (POJ 3061)</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#null"><span class="toc-number">2.</span> <span class="toc-text">差分表</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#差分表例题-最大子数组-算法导论第4章"><span class="toc-number">2.1.</span> <span class="toc-text">差分表例题 - 最大子数组（算法导论第4章）</span></a></li></ol></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 19
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2021 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/12</span><a class="archive-post-title" href= "/2021/01/12/%E5%AE%89%E8%A3%85pytorch/" >安装pytorch</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2020 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/16</span><a class="archive-post-title" href= "/2020/10/16/ESP8266Arduino%E5%BC%80%E5%8F%91/" >Arduino IDE开发ESP8266模块</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/14</span><a class="archive-post-title" href= "/2020/07/14/%E7%BA%BF%E6%80%A7%E6%97%B6%E9%97%B4%E6%8E%92%E5%BA%8F/" >线性时间排序</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/13</span><a class="archive-post-title" href= "/2020/07/13/%E4%BC%98%E5%85%88%E7%BA%A7%E6%8E%92%E5%BA%8F/" >优先级排序</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/11</span><a class="archive-post-title" href= "/2020/07/11/%E7%A7%AF%E5%88%86%E8%A1%A8%E5%92%8C%E5%B7%AE%E5%88%86%E8%A1%A8%E7%9A%84%E4%BD%BF%E7%94%A8/" >积分表和差分表的使用</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/10</span><a class="archive-post-title" href= "/2020/07/10/%E8%B6%85%E6%98%9F%E6%B5%8F%E8%A7%88%E9%A1%B5%E9%9D%A2%E8%87%AA%E5%8A%A8%E6%94%BE%E5%A4%A7/" >超星浏览页面自动放大</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/04</span><a class="archive-post-title" href= "/2020/05/04/BundleFusion%E8%B7%91%E8%87%AA%E5%B7%B1%E7%9A%84%E6%95%B0%E6%8D%AE%E9%9B%86/" >BundleFusion跑自己的数据集</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/05</span><a class="archive-post-title" href= "/2020/04/05/VS%E4%B8%ADOpenCV%E5%92%8CCuda%E7%BB%93%E5%90%88%E7%BC%96%E7%A8%8B/" >VS中OpenCV和Cuda结合编程</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/25</span><a class="archive-post-title" href= "/2020/03/25/html%E8%BF%99%E4%B8%AA%E9%97%B4%E8%B7%9D%E6%80%8E%E4%B9%88%E6%9D%A5%E7%9A%84/" >html这个间距怎么来的</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/23</span><a class="archive-post-title" href= "/2020/03/23/Docker%E5%AE%89%E8%A3%85MicrosoftSQLServer/" >Docker安装MicrosoftSQLServer</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/23</span><a class="archive-post-title" href= "/2020/03/23/Gtk%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8E%A7%E4%BB%B6%E4%B9%8BGtkButton%E5%89%96%E6%9E%90/" >Gtk自定义控件(二)GtkButton剖析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/23</span><a class="archive-post-title" href= "/2020/03/23/Gtk%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8E%A7%E4%BB%B6%E4%B9%8BGObject%E7%B3%BB%E7%BB%9F/" >Gtk自定义控件(一)GObject系统</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/23</span><a class="archive-post-title" href= "/2020/03/23/Gtk%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8E%A7%E4%BB%B6%E4%B9%8BGcalMonthView%E5%89%96%E6%9E%90/" >Gtk自定义控件(三)GcalMonthView剖析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/21</span><a class="archive-post-title" href= "/2020/03/21/vscode%E9%85%8D%E7%BD%AEGTK%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/" >vscode配置GTK开发环境</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/02</span><a class="archive-post-title" href= "/2020/03/02/KinectFusion%E5%8E%9F%E7%90%86%E5%8F%8A%E6%BA%90%E7%A0%81/" >KinectFusion原理及源码</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2019 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/15</span><a class="archive-post-title" href= "/2019/12/15/Docker%E4%BD%BF%E7%94%A8/" >Docker使用注意事项</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/20</span><a class="archive-post-title" href= "/2019/01/20/%E6%8E%92%E5%BA%8F%E4%BA%8C/" >排序（二）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/19</span><a class="archive-post-title" href= "/2019/01/19/%E6%8E%92%E5%BA%8F%E4%B8%80/" >排序（一）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/13</span><a class="archive-post-title" href= "/2019/01/13/C%E8%AF%AD%E8%A8%80%E9%A2%98%E7%9B%AE%E7%9A%84%E9%99%B7%E9%98%B1/" >C语言题目的陷阱</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="c"><span class="iconfont-archer">&#xe606;</span>c</span>
+    
+        <span class="sidebar-tag-name" data-tags="docker"><span class="iconfont-archer">&#xe606;</span>docker</span>
+    
+        <span class="sidebar-tag-name" data-tags="算法"><span class="iconfont-archer">&#xe606;</span>算法</span>
+    
+        <span class="sidebar-tag-name" data-tags="GTK"><span class="iconfont-archer">&#xe606;</span>GTK</span>
+    
+        <span class="sidebar-tag-name" data-tags="三维重建"><span class="iconfont-archer">&#xe606;</span>三维重建</span>
+    
+        <span class="sidebar-tag-name" data-tags="KinectFusion"><span class="iconfont-archer">&#xe606;</span>KinectFusion</span>
+    
+        <span class="sidebar-tag-name" data-tags="稠密重建"><span class="iconfont-archer">&#xe606;</span>稠密重建</span>
+    
+        <span class="sidebar-tag-name" data-tags="MSSQL"><span class="iconfont-archer">&#xe606;</span>MSSQL</span>
+    
+        <span class="sidebar-tag-name" data-tags="html"><span class="iconfont-archer">&#xe606;</span>html</span>
+    
+        <span class="sidebar-tag-name" data-tags="gtk"><span class="iconfont-archer">&#xe606;</span>gtk</span>
+    
+        <span class="sidebar-tag-name" data-tags="opencv"><span class="iconfont-archer">&#xe606;</span>opencv</span>
+    
+        <span class="sidebar-tag-name" data-tags="cuda"><span class="iconfont-archer">&#xe606;</span>cuda</span>
+    
+        <span class="sidebar-tag-name" data-tags="BundleFusion"><span class="iconfont-archer">&#xe606;</span>BundleFusion</span>
+    
+        <span class="sidebar-tag-name" data-tags="油猴脚本"><span class="iconfont-archer">&#xe606;</span>油猴脚本</span>
+    
+        <span class="sidebar-tag-name" data-tags="js"><span class="iconfont-archer">&#xe606;</span>js</span>
+    
+        <span class="sidebar-tag-name" data-tags="esp8266"><span class="iconfont-archer">&#xe606;</span>esp8266</span>
+    
+        <span class="sidebar-tag-name" data-tags="arduino"><span class="iconfont-archer">&#xe606;</span>arduino</span>
+    
+        <span class="sidebar-tag-name" data-tags="python"><span class="iconfont-archer">&#xe606;</span>python</span>
+    
+        <span class="sidebar-tag-name" data-tags="torch"><span class="iconfont-archer">&#xe606;</span>torch</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+        <span class="sidebar-category-name" data-categories="算法原理"><span class="iconfont-archer">&#xe60a;</span>算法原理</span>
+    
+        <span class="sidebar-category-name" data-categories="docker"><span class="iconfont-archer">&#xe60a;</span>docker</span>
+    
+        <span class="sidebar-category-name" data-categories="GTK"><span class="iconfont-archer">&#xe60a;</span>GTK</span>
+    
+        <span class="sidebar-category-name" data-categories="三维重建"><span class="iconfont-archer">&#xe60a;</span>三维重建</span>
+    
+        <span class="sidebar-category-name" data-categories="gtk"><span class="iconfont-archer">&#xe60a;</span>gtk</span>
+    
+        <span class="sidebar-category-name" data-categories="BundleFusion"><span class="iconfont-archer">&#xe60a;</span>BundleFusion</span>
+    
+        <span class="sidebar-category-name" data-categories="算法"><span class="iconfont-archer">&#xe60a;</span>算法</span>
+    
+        <span class="sidebar-category-name" data-categories="脚本"><span class="iconfont-archer">&#xe60a;</span>脚本</span>
+    
+        <span class="sidebar-category-name" data-categories="硬件"><span class="iconfont-archer">&#xe60a;</span>硬件</span>
+    
+        <span class="sidebar-category-name" data-categories="研究"><span class="iconfont-archer">&#xe60a;</span>研究</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "IceSandwich"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+    <!-- busuanzi  -->
+    
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+

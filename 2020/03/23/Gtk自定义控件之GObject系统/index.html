@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="zh">
+    <!-- title -->
+
+
+
+
+<!-- keywords -->
+
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" >
+    <meta name="author" content="IceSandwich">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="IceSandwich">
+    
+    <meta name="keywords" content="programming">
+    
+    <meta name="description" content="">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <title>Gtk自定义控件(一)GObject系统 · IceSandwich</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href= "/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <link rel="stylesheet" href= "/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href= "/null" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script" />
+    <link rel="preload" href="/scripts/main.js" as="script" />
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+<meta name="generator" content="Hexo 4.1.0"></head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >IceSandwich</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">Gtk自定义控件(一)GObject系统</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>IceSandwich</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style="
+
+
+
+
+
+
+
+height:50vh;
+">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(2.png)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            Gtk自定义控件(一)GObject系统
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+                略解GObject，清楚工作原理
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "gtk">gtk</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">1.8k</span>阅读时长: <span class="post-count reading-time">7 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2020/03/23</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <p>GObject是Gtk里非常重要的概念，几乎所有的Gtk代码都涉及到GObject，那到底这是何方神圣以致它在Gtk里应用如此广泛？</p>
+<h2 id="对gobject的初次了解"><a class="header-anchor" href="#对gobject的初次了解"></a>对GObject的初次了解</h2>
+<p>总的来说，GObject做的事情是：<strong>在c里实现面向对象</strong>。</p>
+<p>众所周知，c是面向过程语言，可是可以通过一些手段实现面向对象。</p>
+<h2 id="从面向对象了解"><a class="header-anchor" href="#从面向对象了解"></a>从面向对象了解</h2>
+<p>来看一下这段C++代码</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CircleShape</span> &#123;</span></span><br><span class="line">    <span class="keyword">constexpr</span> <span class="keyword">static</span> <span class="keyword">double</span> PI = <span class="number">3.1415926</span>; <span class="comment">//静态和常量</span></span><br><span class="line">    <span class="keyword">int</span> radius;                         <span class="comment">//局部变量</span></span><br><span class="line">    <span class="keyword">private</span>:</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">setRadius</span><span class="params">(<span class="keyword">int</span> r)</span> </span>&#123;                  <span class="comment">//私有函数</span></span><br><span class="line">        radius = r;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">    CircleShape(<span class="keyword">int</span> r) &#123;                <span class="comment">//构造函数</span></span><br><span class="line">        setRadius(r);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">double</span> <span class="title">getArea</span><span class="params">()</span> </span>&#123;                  <span class="comment">//公开函数</span></span><br><span class="line">        <span class="keyword">return</span> PI*radius*radius;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">double</span> <span class="title">getPI</span><span class="params">()</span> </span>&#123;             <span class="comment">//静态函数</span></span><br><span class="line">        <span class="keyword">return</span> PI;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span> </span>&#123;</span><br><span class="line">    <span class="function">CircleShape <span class="title">cs</span><span class="params">(<span class="number">2</span>)</span></span>;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; </span><br><span class="line">        CircleShape::getPI() &lt;&lt; <span class="string">"*2="</span> &lt;&lt; cs.getArea() </span><br><span class="line">    &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>重点关注CircleShape这个类，里面有静态变量、局部变量和常量，有私有函数、公开函数、静态函数。</p>
+<p>面向对象有三个特性：<strong>继承、封装、多态</strong></p>
+<p><img src="/2020/03/23/Gtk%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8E%A7%E4%BB%B6%E4%B9%8BGObject%E7%B3%BB%E7%BB%9F/1.jpg" alt></p>
+<h2 id="结合gobject用c实现这个类"><a class="header-anchor" href="#结合gobject用c实现这个类"></a>结合GObject用C实现这个类</h2>
+<p>为了实现面向对象的三个特征，我们可以将其拆成三个部分。</p>
+<p><img src="/2020/03/23/Gtk%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8E%A7%E4%BB%B6%E4%B9%8BGObject%E7%B3%BB%E7%BB%9F/2.png" alt></p>
+<p>如图，蓝色部分是类的定义，描述类的信息；红色部分是类内变量；绿色部分是各种函数定义。</p>
+<p>按照这样拆分并且按照一定规则翻译成C即可，没有什么难度，是吗？完整代码如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* 文件: CircleShape.hpp */</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> __CIRCLESHAPE_HPP__</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> __CIRCLESHAPE_HPP__</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;gtk-3.0/gtk/gtk.h&gt;</span></span></span><br><span class="line">G_BEGIN_DECLS</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> CIRCLESHAPE_TYPE (circleshape_get_type())</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> CIRCLESHAPE(obj)                 (G_TYPE_CHECK_INSTANCE_CAST ((obj), CIRCLESHAPE_TYPE, CircleShape))</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> CIRCLESHAPE_CLASS(klass)         (G_TYPE_CHECK_CLASS_CAST ((klass), CIRCLESHAPE_TYPE, CircleShapeClass))</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IS_CIRCLESHAPE(obj)              (G_TYPE_CHECK_INSTANCE_TYPE ((obj), CIRCLESHAPE_TYPE))</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IS_CIRCLESHAPE_CLASS(klass)      (G_TYPE_CHECK_CLASS_TYPE ((klass), CIRCLESHAPE_TYPE))</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> CIRCLESHAPE_GET_CLASS(obj)       (G_TYPE_INSTANCE_GET_CLASS ((obj), CIRCLESHAPE_TYPE, CircleShapeClass))</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">static</span> <span class="keyword">double</span> PI = <span class="number">3.1415926</span>; <span class="comment">//这里是静态和常量</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">CircleShape</span> &#123;</span></span><br><span class="line">    GObject parent;             <span class="comment">//指明父类，继承于GObject</span></span><br><span class="line">&#125; CircleShape;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">CircleShapeClass</span> &#123;</span></span><br><span class="line">    GObjectClass parent_class;  <span class="comment">//指明类的父类，继承于GObjectClass</span></span><br><span class="line">&#125; CircleShapeClass;</span><br><span class="line"></span><br><span class="line">GDK_AVAILABLE_IN_ALL</span><br><span class="line"><span class="function">CircleShape* <span class="title">circleshape_new</span><span class="params">(<span class="keyword">int</span> r)</span></span>;        <span class="comment">//构造函数</span></span><br><span class="line">GDK_AVAILABLE_IN_ALL</span><br><span class="line"><span class="function"><span class="keyword">double</span> <span class="title">circleshape_getArea</span><span class="params">(CircleShape *cs)</span></span>; <span class="comment">//公开函数</span></span><br><span class="line">GDK_AVAILABLE_IN_ALL</span><br><span class="line"><span class="function"><span class="keyword">double</span> <span class="title">circleshape_getPI</span><span class="params">()</span></span>;                  <span class="comment">//静态函数</span></span><br><span class="line"></span><br><span class="line">G_END_DECLS</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* 文件：CircleShape.cpp */</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"CircleShape.hpp"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;gtk-3.0/gtk/gtk.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">CircleShapePrivate</span> &#123;</span> <span class="comment">//私有成员</span></span><br><span class="line">    <span class="keyword">int</span> radius;</span><br><span class="line">&#125; CircleShapePrivate;</span><br><span class="line"></span><br><span class="line"><span class="comment">//自动生成：gtk_gadget_get_type，gtk_gadget_class_intern_init，gtk_gadget_parent_class </span></span><br><span class="line"><span class="comment">//With Private：自动生成gtk_gadget_get_instance_private</span></span><br><span class="line"><span class="comment">//需要完成：gtk_gadget_init，gtk_gadget_class_init </span></span><br><span class="line">G_DEFINE_TYPE_WITH_PRIVATE(CircleShape, circleshape, G_TYPE_OBJECT);</span><br><span class="line"></span><br><span class="line"><span class="comment">//就目前来说，这个类这两个函数无需干任何事情</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">circleshape_init</span><span class="params">(CircleShape *cs)</span> </span>&#123;&#125; <span class="comment">//对象初始化</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">circleshape_class_init</span><span class="params">(CircleShapeClass *klass)</span> </span>&#123;&#125; <span class="comment">//类初始化</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">setRadius</span><span class="params">(CircleShape* cs, <span class="keyword">int</span> r)</span> </span>&#123;</span><br><span class="line">    CircleShapePrivate *priv = (CircleShapePrivate*)circleshape_get_instance_private(cs);</span><br><span class="line">    priv-&gt;radius = r;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">double</span> <span class="title">circleshape_getArea</span><span class="params">(CircleShape *cs)</span> </span>&#123;</span><br><span class="line">    CircleShapePrivate *priv = (CircleShapePrivate*)circleshape_get_instance_private(cs);</span><br><span class="line">    <span class="keyword">double</span> radius = priv-&gt;radius;</span><br><span class="line">    <span class="keyword">return</span> PI*radius*radius;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">double</span> <span class="title">circleshape_getPI</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> PI; &#125;</span><br><span class="line"></span><br><span class="line"><span class="function">CircleShape* <span class="title">circleshape_new</span><span class="params">(<span class="keyword">int</span> r)</span> </span>&#123;</span><br><span class="line">    CircleShape *cs = (CircleShape*)g_object_new(CIRCLESHAPE_TYPE, <span class="number">0</span>);</span><br><span class="line">    setRadius(cs, r);</span><br><span class="line">    <span class="keyword">return</span> cs;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>哇，代码那么多！别怕，下面一一讲解。</p>
+<h2 id="头文件"><a class="header-anchor" href="#头文件"></a>头文件</h2>
+<p><code>G_BEGIN_DECLS</code>和<code>G_END_DECLS</code>分别是<code>extern &quot;C&quot; {</code>和<code>}</code>，主要是用于兼容C++，这里跟GObject无关。</p>
+<p>那么，这个是什么？</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> CIRCLESHAPE_TYPE (circleshape_get_type())</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> CIRCLESHAPE(obj)                 (G_TYPE_CHECK_INSTANCE_CAST ((obj), CIRCLESHAPE_TYPE, CircleShape))</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> CIRCLESHAPE_CLASS(klass)         (G_TYPE_CHECK_CLASS_CAST ((klass), CIRCLESHAPE_TYPE, CircleShapeClass))</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IS_CIRCLESHAPE(obj)              (G_TYPE_CHECK_INSTANCE_TYPE ((obj), CIRCLESHAPE_TYPE))</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IS_CIRCLESHAPE_CLASS(klass)      (G_TYPE_CHECK_CLASS_TYPE ((klass), CIRCLESHAPE_TYPE))</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> CIRCLESHAPE_GET_CLASS(obj)       (G_TYPE_INSTANCE_GET_CLASS ((obj), CIRCLESHAPE_TYPE, CircleShapeClass))</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>类名字_TYPE：就是类名字_get_type的调用。<br>
+类名字(obj)：调用<code>G_TYPE_CHECK_INSTANCE_CAST</code>对obj进行检查和转换。<br>
+类名字_CLASS(klass)：调用<code>G_TYPE_CHECK_CLASS_CAST</code>对obj进行检查和转换。<br>
+IS_类名字(klass)：就是检查是不是这个类，不转换。<br>
+类名字_GET_CLASS(obj)：顾名思义，得到这个类的class。</p>
+</blockquote>
+<p>聪明的你已经发现了，类名字_get_type()这个实现在哪里呢？其实在后面<code>G_DEFINE_TYPE_WITH_PRIVATE</code>有定义，我们后面再讲。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">static</span> <span class="keyword">double</span> PI = <span class="number">3.1415926</span>; <span class="comment">//这里是静态和常量</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">CircleShape</span> &#123;</span></span><br><span class="line">    GObject parent;             <span class="comment">//指明父类，继承于GObject</span></span><br><span class="line">&#125; CircleShape;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">CircleShapeClass</span> &#123;</span></span><br><span class="line">    GObjectClass parent_class;  <span class="comment">//指明类的父类，继承于GObjectClass</span></span><br><span class="line">&#125; CircleShapeClass;</span><br></pre></td></tr></table></figure>
+<p>将类写成两个结构休，要有类的描述CircleShapeClass，这个是类的实现原理。</p>
+<p>这里每个结构体都要有一个父类，目的是？<strong>体现面向对象的继承性</strong>。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">GDK_AVAILABLE_IN_ALL</span><br><span class="line"><span class="function">CircleShape* <span class="title">circleshape_new</span><span class="params">(<span class="keyword">int</span> r)</span></span>;        <span class="comment">//构造函数</span></span><br><span class="line">GDK_AVAILABLE_IN_ALL</span><br><span class="line"><span class="function"><span class="keyword">double</span> <span class="title">circleshape_getArea</span><span class="params">(CircleShape *cs)</span></span>; <span class="comment">//公开函数</span></span><br><span class="line">GDK_AVAILABLE_IN_ALL</span><br><span class="line"><span class="function"><span class="keyword">double</span> <span class="title">circleshape_getPI</span><span class="params">()</span></span>;                  <span class="comment">//静态函数</span></span><br></pre></td></tr></table></figure>
+<p>这些就是你熟悉的各种函数了，除了<code>GDK_AVAILABLE_IN_ALL</code>，这个就是<code>extern</code>，呃，感觉这个宏变复杂了，不过有这个宏不是更容易看吗？</p>
+<h2 id="源文件"><a class="header-anchor" href="#源文件"></a>源文件</h2>
+<p>有意思的是，我们把私有成员放在源文件里，为了不让懵懵懂懂的程序员随便修改我们的私有成员，达到隐藏数据结构的目的。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">CircleShapePrivate</span> &#123;</span> <span class="comment">//私有成员</span></span><br><span class="line">    <span class="keyword">int</span> radius;</span><br><span class="line">&#125; CircleShapePrivate;</span><br></pre></td></tr></table></figure>
+<p><strong>！最重要的地方在这里</strong>，<code>G_DEFINE_TYPE</code>有很多形式，但是原理上是有互相调用的：</p>
+<ul>
+<li><code>G_DEFINE_TYPE</code></li>
+<li><code>G_DEFINE_TYPE_EXTEND</code></li>
+<li><code>G_DEFINE_TYPE_WITH_CODE</code></li>
+<li><code>G_DEFINE_TYPE_WITH_PRIVATE</code></li>
+</ul>
+<p>这里使用的是<code>G_DEFINE_TYPE_WITH_PRIVATE</code>，它实质上是调用<code>G_DEFINE_TYPE_EXTENDED</code>实现的。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//自动生成：gtk_gadget_get_type，gtk_gadget_class_intern_init，gtk_gadget_parent_class </span></span><br><span class="line"><span class="comment">//With Private：自动生成gtk_gadget_get_instance_private</span></span><br><span class="line"><span class="comment">//需要完成：gtk_gadget_init，gtk_gadget_class_init </span></span><br><span class="line">G_DEFINE_TYPE_WITH_PRIVATE(CircleShape, circleshape, G_TYPE_OBJECT);</span><br></pre></td></tr></table></figure>
+<p>它可以算是一个语法糖，用一个宏生成一堆代码，不用自己造轮子。</p>
+<p>这个宏帮我们生成的函数有：</p>
+<p>gtk_gadget_get_type，gtk_gadget_class_intern_init，gtk_gadget_get_instance_private</p>
+<p>但是它生成的一些函数需要我们自定义的有：gtk_gadget_init，gtk_gadget_class_init</p>
+<p>嗯，一个类的构造函数，一个是类描述的初始化，这些只能是根据你类的功能做出相应的改变，gtk没办法帮你生成。所以我们接着把这两个函数实现了吧：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//就目前来说，这个类这两个函数无需干任何事情</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">circleshape_init</span><span class="params">(CircleShape *cs)</span> </span>&#123;&#125; <span class="comment">//对象初始化</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">circleshape_class_init</span><span class="params">(CircleShapeClass *klass)</span> </span>&#123;&#125; <span class="comment">//类初始化</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注意：</p>
+<p>每次g_object_new都会调用gtk_gadget_init，因为这个是类的构造函数</p>
+<p>但是gtk_gadget_class_init只有第一次才调用，其他时候都不会调用，因为这是类描述的初始化，相当于固定下来了，不需要进行改动。</p>
+</blockquote>
+<p>然后就是我们的自定义函数啦：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">setRadius</span><span class="params">(CircleShape* cs, <span class="keyword">int</span> r)</span> </span>&#123;</span><br><span class="line">    CircleShapePrivate *priv = (CircleShapePrivate*)circleshape_get_instance_private(cs);</span><br><span class="line">    priv-&gt;radius = r;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">double</span> <span class="title">circleshape_getArea</span><span class="params">(CircleShape *cs)</span> </span>&#123;</span><br><span class="line">    CircleShapePrivate *priv = (CircleShapePrivate*)circleshape_get_instance_private(cs);</span><br><span class="line">    <span class="keyword">double</span> radius = priv-&gt;radius;</span><br><span class="line">    <span class="keyword">return</span> PI*radius*radius;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">double</span> <span class="title">circleshape_getPI</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> PI; &#125;</span><br></pre></td></tr></table></figure>
+<p>这些没什么好说的，注意两点：</p>
+<ul>
+<li>
+<p>函数命名：(命名空间_)类名_类中函数名</p>
+</li>
+<li>
+<p>第一个函数参数：指向类的指针，在python里面这个叫<code>self</code>，在C++、JAVA里面这个叫<code>this</code></p>
+</li>
+</ul>
+<p>还有别忘了这个哦 ：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">CircleShape* <span class="title">circleshape_new</span><span class="params">(<span class="keyword">int</span> r)</span> </span>&#123;</span><br><span class="line">    CircleShape *cs = (CircleShape*)g_object_new(CIRCLESHAPE_TYPE, <span class="number">0</span>);</span><br><span class="line">    setRadius(cs, r);</span><br><span class="line">    <span class="keyword">return</span> cs;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个嘛，相当于自定义JAVA里面的new操作符，对象总得new一个嘛，对不对？就是靠这个new出来的，这个实际上是调用<code>g_object_new</code>实现的，其实这里是调用了我们的<code>circleshape_init</code>哦！对象初始化嘛。如果是第一次new呢？当然还要调用<code>circleshape_class_init</code>啦，这样GObject才能知道这个类的存在嘛。</p>
+<h2 id="主程序"><a class="header-anchor" href="#主程序"></a>主程序</h2>
+<p>通过改写class，那我们怎么使用这个类啊？</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"CircleShape.hpp"</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span> </span>&#123;</span><br><span class="line">    CircleShape* cs = circleshape_new(<span class="number">2</span>);</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; </span><br><span class="line">        circleshape_getPI() &lt;&lt; <span class="string">"*2="</span> &lt;&lt; circleshape_getArea(cs)</span><br><span class="line">    &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里就跟GTK的调用一样了，这么方便调用，我们都不用知道它内部怎么工作的了。</p>
+<p>这体现了什么？<strong>面向对象的封装性!</strong></p>
+<h2 id="前记"><a class="header-anchor" href="#前记"></a>前记</h2>
+<p>什么？前记？怎么才是前记？因为前面都是基础啊。GObject还有很多内容呢</p>
+<p>你说它没有体现多态？那确实。但是GObject是把多态设计进去的了，我们以后将会遇到。</p>
+<h2 id="其实最近也没在搞gtk了"><a class="header-anchor" href="#其实最近也没在搞gtk了"></a>其实最近也没在搞GTK了</h2>
+<p>先鸽一下吧，到搞GTK的时候再更新…</p>
+
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>原文作者：<a href="https://IceSandwich.github.io">IceSandwich</a>
+            <p>原文链接：<a href="https://icesandwich.github.io/2020/03/23/Gtk%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8E%A7%E4%BB%B6%E4%B9%8BGObject%E7%B3%BB%E7%BB%9F/">https://icesandwich.github.io/2020/03/23/Gtk%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8E%A7%E4%BB%B6%E4%B9%8BGObject%E7%B3%BB%E7%BB%9F/</a>
+            <p>发表日期：<a href="https://icesandwich.github.io/2020/03/23/Gtk%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8E%A7%E4%BB%B6%E4%B9%8BGObject%E7%B3%BB%E7%BB%9F/">March 23rd 2020, 12:00:00 am</a>
+            <p>更新日期：<a href="https://icesandwich.github.io/2020/03/23/Gtk%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8E%A7%E4%BB%B6%E4%B9%8BGObject%E7%B3%BB%E7%BB%9F/">January 12th 2021, 3:02:29 pm</a>
+            <p>版权声明：本文采用<a rel="license noopener" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
+        </div>
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href= "/2020/03/23/Gtk%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8E%A7%E4%BB%B6%E4%B9%8BGtkButton%E5%89%96%E6%9E%90/" title= "Gtk自定义控件(二)GtkButton剖析">
+                    <div class="nextTitle">Gtk自定义控件(二)GtkButton剖析</div>
+                </a>
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href= "/2020/03/23/Gtk%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8E%A7%E4%BB%B6%E4%B9%8BGcalMonthView%E5%89%96%E6%9E%90/" title= "Gtk自定义控件(三)GcalMonthView剖析">
+                    <div class="prevTitle">Gtk自定义控件(三)GcalMonthView剖析</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!-- partial('_partial/comment/changyan') -->
+    <!--PC版-->
+
+
+    
+    
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:wire73poc@foxmail.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="https://github.com/IceSandwich" class="iconfont-archer github" target="_blank" title=github></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+    
+     
+    <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+    
+    </div>
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#对gobject的初次了解"><span class="toc-number">1.</span> <span class="toc-text">对GObject的初次了解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#从面向对象了解"><span class="toc-number">2.</span> <span class="toc-text">从面向对象了解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#结合gobject用c实现这个类"><span class="toc-number">3.</span> <span class="toc-text">结合GObject用C实现这个类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#头文件"><span class="toc-number">4.</span> <span class="toc-text">头文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#源文件"><span class="toc-number">5.</span> <span class="toc-text">源文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#主程序"><span class="toc-number">6.</span> <span class="toc-text">主程序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#前记"><span class="toc-number">7.</span> <span class="toc-text">前记</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#其实最近也没在搞gtk了"><span class="toc-number">8.</span> <span class="toc-text">其实最近也没在搞GTK了</span></a></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 19
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2021 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/12</span><a class="archive-post-title" href= "/2021/01/12/%E5%AE%89%E8%A3%85pytorch/" >安装pytorch</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2020 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/16</span><a class="archive-post-title" href= "/2020/10/16/ESP8266Arduino%E5%BC%80%E5%8F%91/" >Arduino IDE开发ESP8266模块</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/14</span><a class="archive-post-title" href= "/2020/07/14/%E7%BA%BF%E6%80%A7%E6%97%B6%E9%97%B4%E6%8E%92%E5%BA%8F/" >线性时间排序</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/13</span><a class="archive-post-title" href= "/2020/07/13/%E4%BC%98%E5%85%88%E7%BA%A7%E6%8E%92%E5%BA%8F/" >优先级排序</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/11</span><a class="archive-post-title" href= "/2020/07/11/%E7%A7%AF%E5%88%86%E8%A1%A8%E5%92%8C%E5%B7%AE%E5%88%86%E8%A1%A8%E7%9A%84%E4%BD%BF%E7%94%A8/" >积分表和差分表的使用</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/10</span><a class="archive-post-title" href= "/2020/07/10/%E8%B6%85%E6%98%9F%E6%B5%8F%E8%A7%88%E9%A1%B5%E9%9D%A2%E8%87%AA%E5%8A%A8%E6%94%BE%E5%A4%A7/" >超星浏览页面自动放大</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/04</span><a class="archive-post-title" href= "/2020/05/04/BundleFusion%E8%B7%91%E8%87%AA%E5%B7%B1%E7%9A%84%E6%95%B0%E6%8D%AE%E9%9B%86/" >BundleFusion跑自己的数据集</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/05</span><a class="archive-post-title" href= "/2020/04/05/VS%E4%B8%ADOpenCV%E5%92%8CCuda%E7%BB%93%E5%90%88%E7%BC%96%E7%A8%8B/" >VS中OpenCV和Cuda结合编程</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/25</span><a class="archive-post-title" href= "/2020/03/25/html%E8%BF%99%E4%B8%AA%E9%97%B4%E8%B7%9D%E6%80%8E%E4%B9%88%E6%9D%A5%E7%9A%84/" >html这个间距怎么来的</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/23</span><a class="archive-post-title" href= "/2020/03/23/Docker%E5%AE%89%E8%A3%85MicrosoftSQLServer/" >Docker安装MicrosoftSQLServer</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/23</span><a class="archive-post-title" href= "/2020/03/23/Gtk%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8E%A7%E4%BB%B6%E4%B9%8BGtkButton%E5%89%96%E6%9E%90/" >Gtk自定义控件(二)GtkButton剖析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/23</span><a class="archive-post-title" href= "/2020/03/23/Gtk%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8E%A7%E4%BB%B6%E4%B9%8BGObject%E7%B3%BB%E7%BB%9F/" >Gtk自定义控件(一)GObject系统</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/23</span><a class="archive-post-title" href= "/2020/03/23/Gtk%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8E%A7%E4%BB%B6%E4%B9%8BGcalMonthView%E5%89%96%E6%9E%90/" >Gtk自定义控件(三)GcalMonthView剖析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/21</span><a class="archive-post-title" href= "/2020/03/21/vscode%E9%85%8D%E7%BD%AEGTK%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/" >vscode配置GTK开发环境</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/02</span><a class="archive-post-title" href= "/2020/03/02/KinectFusion%E5%8E%9F%E7%90%86%E5%8F%8A%E6%BA%90%E7%A0%81/" >KinectFusion原理及源码</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2019 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/15</span><a class="archive-post-title" href= "/2019/12/15/Docker%E4%BD%BF%E7%94%A8/" >Docker使用注意事项</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/20</span><a class="archive-post-title" href= "/2019/01/20/%E6%8E%92%E5%BA%8F%E4%BA%8C/" >排序（二）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/19</span><a class="archive-post-title" href= "/2019/01/19/%E6%8E%92%E5%BA%8F%E4%B8%80/" >排序（一）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/13</span><a class="archive-post-title" href= "/2019/01/13/C%E8%AF%AD%E8%A8%80%E9%A2%98%E7%9B%AE%E7%9A%84%E9%99%B7%E9%98%B1/" >C语言题目的陷阱</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="c"><span class="iconfont-archer">&#xe606;</span>c</span>
+    
+        <span class="sidebar-tag-name" data-tags="docker"><span class="iconfont-archer">&#xe606;</span>docker</span>
+    
+        <span class="sidebar-tag-name" data-tags="算法"><span class="iconfont-archer">&#xe606;</span>算法</span>
+    
+        <span class="sidebar-tag-name" data-tags="GTK"><span class="iconfont-archer">&#xe606;</span>GTK</span>
+    
+        <span class="sidebar-tag-name" data-tags="三维重建"><span class="iconfont-archer">&#xe606;</span>三维重建</span>
+    
+        <span class="sidebar-tag-name" data-tags="KinectFusion"><span class="iconfont-archer">&#xe606;</span>KinectFusion</span>
+    
+        <span class="sidebar-tag-name" data-tags="稠密重建"><span class="iconfont-archer">&#xe606;</span>稠密重建</span>
+    
+        <span class="sidebar-tag-name" data-tags="MSSQL"><span class="iconfont-archer">&#xe606;</span>MSSQL</span>
+    
+        <span class="sidebar-tag-name" data-tags="html"><span class="iconfont-archer">&#xe606;</span>html</span>
+    
+        <span class="sidebar-tag-name" data-tags="gtk"><span class="iconfont-archer">&#xe606;</span>gtk</span>
+    
+        <span class="sidebar-tag-name" data-tags="opencv"><span class="iconfont-archer">&#xe606;</span>opencv</span>
+    
+        <span class="sidebar-tag-name" data-tags="cuda"><span class="iconfont-archer">&#xe606;</span>cuda</span>
+    
+        <span class="sidebar-tag-name" data-tags="BundleFusion"><span class="iconfont-archer">&#xe606;</span>BundleFusion</span>
+    
+        <span class="sidebar-tag-name" data-tags="油猴脚本"><span class="iconfont-archer">&#xe606;</span>油猴脚本</span>
+    
+        <span class="sidebar-tag-name" data-tags="js"><span class="iconfont-archer">&#xe606;</span>js</span>
+    
+        <span class="sidebar-tag-name" data-tags="esp8266"><span class="iconfont-archer">&#xe606;</span>esp8266</span>
+    
+        <span class="sidebar-tag-name" data-tags="arduino"><span class="iconfont-archer">&#xe606;</span>arduino</span>
+    
+        <span class="sidebar-tag-name" data-tags="python"><span class="iconfont-archer">&#xe606;</span>python</span>
+    
+        <span class="sidebar-tag-name" data-tags="torch"><span class="iconfont-archer">&#xe606;</span>torch</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+        <span class="sidebar-category-name" data-categories="算法原理"><span class="iconfont-archer">&#xe60a;</span>算法原理</span>
+    
+        <span class="sidebar-category-name" data-categories="docker"><span class="iconfont-archer">&#xe60a;</span>docker</span>
+    
+        <span class="sidebar-category-name" data-categories="GTK"><span class="iconfont-archer">&#xe60a;</span>GTK</span>
+    
+        <span class="sidebar-category-name" data-categories="三维重建"><span class="iconfont-archer">&#xe60a;</span>三维重建</span>
+    
+        <span class="sidebar-category-name" data-categories="gtk"><span class="iconfont-archer">&#xe60a;</span>gtk</span>
+    
+        <span class="sidebar-category-name" data-categories="BundleFusion"><span class="iconfont-archer">&#xe60a;</span>BundleFusion</span>
+    
+        <span class="sidebar-category-name" data-categories="算法"><span class="iconfont-archer">&#xe60a;</span>算法</span>
+    
+        <span class="sidebar-category-name" data-categories="脚本"><span class="iconfont-archer">&#xe60a;</span>脚本</span>
+    
+        <span class="sidebar-category-name" data-categories="硬件"><span class="iconfont-archer">&#xe60a;</span>硬件</span>
+    
+        <span class="sidebar-category-name" data-categories="研究"><span class="iconfont-archer">&#xe60a;</span>研究</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "IceSandwich"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+    <!-- busuanzi  -->
+    
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+

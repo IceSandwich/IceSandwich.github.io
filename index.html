@@ -359,6 +359,75 @@ height:50vh;
     
     
     <article class="index-post">
+        <a class="abstract-title" href = "/2021/02/15/PR%E4%BD%BF%E7%94%A8FFMpeg%E4%BD%9C%E4%B8%BA%E7%BC%96%E7%A0%81%E5%99%A8/" >
+            
+                <span>PR使用FFmpeg作为编码器</span>
+        </a>
+        <div class="abstract-content">
+            前言
+一直以来都不喜欢Adobe的Media Encoder，渲染的文件贼大，字幕又不好加。最近在开发blender的插件，看能不能将blender改成像pr那样的剪辑方式。无论如何，如果PR能使用FFmpeg作为编码器就好了。这不，还真给我找到了方法。首先，当然有前人的成功才有我的可能。搜索这方面的文章，很快就能看到官方的一篇文章，介绍给PR使用FFmpeg的。其中，我们使用的是FrameServer的方法。
+问题是嘛，这个文章是6年前发布的，老到掉牙！很多软件还是32位，而且已经不更新了。这些软件不是不能用，只是，64位系统用32位的软件，性能有点缩水。。。于是又经过了一番搜寻，我终...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2021/02/15</span>
+            </div>
+            <!-- tags  -->
+            
+            <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "Premiere">Premiere</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "FFmpeg">FFmpeg</a>
+    
+</div>
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
+        <a class="abstract-title" href = "/2021/02/03/%E5%B0%86%E8%99%9A%E6%8B%9F%E6%9C%BAlocalhost%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91%E5%88%B0%E5%AE%BF%E4%B8%BB%E6%9C%BA%E4%B8%8A/" >
+            
+                <span>将虚拟机localhost端口转发到宿主机上</span>
+        </a>
+        <div class="abstract-content">
+            前言
+我有一个软件在虚拟机里，监听一个端口。我想在宿主机上能访问这个端口，显然，一个端口转发就能解决的事情。但是，我发现事情没那么简单。因为，这个软件太狡猾了，它的端口规定必须是在回环地址127.0.0.1上，改成0.0.0.0会阻止你进一步的操作。接下来，就要将这种不可能的事情实现。
+准备
+已知软件开放地址： 127.0.0.1:49158
+需要在虚拟机转发到的地址： 0.0.0.0:49158
+需要在宿主机能访问的地址：127.0.0.1:49158
+虚拟机
+前面我们提到，只要端口挂载在0.0.0.0上，就可以用端口转发完成。那么端口在127.0.0.1上呢？是不是也可以用端口转发将...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2021/02/03</span>
+            </div>
+            <!-- tags  -->
+            
+            <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "渗透">渗透</a>
+    
+</div>
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
         <a class="abstract-title" href = "/2021/01/12/%E5%AE%89%E8%A3%85pytorch/" >
             
                 <span>安装pytorch</span>
@@ -682,81 +751,10 @@ Visual Studio 2017
         </div>
     </article>
     
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2020/03/25/html%E8%BF%99%E4%B8%AA%E9%97%B4%E8%B7%9D%E6%80%8E%E4%B9%88%E6%9D%A5%E7%9A%84/" >
-            
-                <span>html这个间距怎么来的</span>
-        </a>
-        <div class="abstract-content">
-            近来，写html网页的时候，发现一个问题：同一个网页Firefox和Chrome显示不一样。这。。。一般人都认为是引擎的问题吧，毕竟一个webkit，一个gecko，渲染肯定不一样。但是，细想后发现，其实不是引擎的问题哦。
-
-这是中间搜索框的源码：
-
-为了让大家看得清楚，我给里面的控件标上了颜色：
-绿色的为那个input，蓝色和红色分别是class为photo和search的button。
-
-从源码看到，各控件之间是没有东西的，但是为什么有白色的间隙呢？两浏览器显示不同的根本原因就是这个间隙的存在，并且每个浏览器定义的这个间隙宽度不一样（实测Chrome的比Firefox多1px，因此溢...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2020/03/25</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "html">html</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2020/03/23/Docker%E5%AE%89%E8%A3%85MicrosoftSQLServer/" >
-            
-                <span>Docker安装MicrosoftSQLServer</span>
-        </a>
-        <div class="abstract-content">
-            由于课程需要，个人电脑需要装上Microsoft SQL Server 2012，但是呢，遇到Windows Update的问题无法安装，原因是我把Windows Update给禁用了，但是呢，又不想开启Windows Update，但是呢，MSSQL还是要用的嘛。所以呢，我想到在docker里面装MSSQL会怎么样，没想到还真的可以[1]😂。
-拉取镜像
-
-从docker hub官网[2]上找到MSSQL，欢天喜地，按照上面的提示拉取镜像。
-值得注意的是，只有从2017版本开始MSSQL才有docker版，也就是说想装MSSQL2012是不可能的哈。这里我下载的是2017企业版，需要的...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2020/03/23</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "docker">docker</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "MSSQL">MSSQL</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
     <!-- paginator  -->
     
     <nav class="page-nav">
-        <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">NEXT &amp;#62;</a>
+        <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/">NEXT &amp;#62;</a>
     </nav>
     
 </main>
@@ -1140,9 +1138,39 @@ Visual Studio 2017
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 19
+        Total : 21
         </div>
         <!-- search  -->
         
@@ -1155,6 +1183,16 @@ Visual Studio 2017
     
     <div class="archive-year"> 2021 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/15</span><a class="archive-post-title" href= "/2021/02/15/PR%E4%BD%BF%E7%94%A8FFMpeg%E4%BD%9C%E4%B8%BA%E7%BC%96%E7%A0%81%E5%99%A8/" >PR使用FFmpeg作为编码器</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/03</span><a class="archive-post-title" href= "/2021/02/03/%E5%B0%86%E8%99%9A%E6%8B%9F%E6%9C%BAlocalhost%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91%E5%88%B0%E5%AE%BF%E4%B8%BB%E6%9C%BA%E4%B8%8A/" >将虚拟机localhost端口转发到宿主机上</a>
+        </li>
     
     
         <li class="archive-post-item">
@@ -1312,6 +1350,12 @@ Visual Studio 2017
     
         <span class="sidebar-tag-name" data-tags="torch"><span class="iconfont-archer">&#xe606;</span>torch</span>
     
+        <span class="sidebar-tag-name" data-tags="Premiere"><span class="iconfont-archer">&#xe606;</span>Premiere</span>
+    
+        <span class="sidebar-tag-name" data-tags="FFmpeg"><span class="iconfont-archer">&#xe606;</span>FFmpeg</span>
+    
+        <span class="sidebar-tag-name" data-tags="渗透"><span class="iconfont-archer">&#xe606;</span>渗透</span>
+    
     </div>
     <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
     <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
@@ -1364,6 +1408,10 @@ jsonContent:
         <span class="sidebar-category-name" data-categories="硬件"><span class="iconfont-archer">&#xe60a;</span>硬件</span>
     
         <span class="sidebar-category-name" data-categories="研究"><span class="iconfont-archer">&#xe60a;</span>研究</span>
+    
+        <span class="sidebar-category-name" data-categories="FFMPEG"><span class="iconfont-archer">&#xe60a;</span>FFMPEG</span>
+    
+        <span class="sidebar-category-name" data-categories="渗透"><span class="iconfont-archer">&#xe60a;</span>渗透</span>
     
     </div>
     <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>

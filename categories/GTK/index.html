@@ -346,30 +346,99 @@
     
     
     <article class="index-post">
-        <a class="abstract-title" href = "/2020/03/21/vscode%E9%85%8D%E7%BD%AEGTK%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/" >
+        <a class="abstract-title" href = "/2020/03/23/Gtk%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8E%A7%E4%BB%B6%E4%B9%8BGtkButton%E5%89%96%E6%9E%90/" >
             
-                <span>vscode配置GTK开发环境</span>
+                <span>Gtk自定义控件(二)GtkButton剖析</span>
         </a>
         <div class="abstract-content">
-            Windows系统的从第一步开始，非Windows系统（Linux、MacOS）从第2~4步即可。
-在Windows配置Linux环境
-MSYS2是在Windows模拟Linux环境的工具，可以用于软件包的管理。GTK官网建议使用MSYS2安装gtk+3.0开发库，
-具体安装步骤网上都有，这里不再详细描述，这里假设你已经安装MSYS2并且在里面安装了gtk+3.0开发库。然鹅，多数命令只能在MSYS窗口输入并运行，为了让我们的cmd能够运行这些命令，需要将其添加到环境变量中。
-添加的目录有（假设%MSYS2_ROOT%为你安装MSYS2的目录）：
+            使用GTK的开发者都清楚，自定义一个控件有多难，但是理解后又觉得这是常规操作。为了清楚了解GObject的工作方式，我们从GtkButon这个简单的控件进行剖析。
+从Inspector剖析
+写一段简单的代码：
 
+打开Gtk Inspector（按Control-Shift-I 或Control-Shift-D即可）
 
-%MSYS2_ROOT%\usr\b...
+可以看到，GtkButton的子控件是GtkLabel和GtkGestureMultiPress，前者是用于文本显示，后者用于捕获鼠标动作。然后我们看一下信号槽：
+
+可以看到GtkButton发出6个信号，连接9个信号（图中没显示）
+GtkGestureMultiPress...
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
             <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2020/03/21</span>
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2020/03/23</span>
             </div>
             <!-- tags  -->
             
             <div class= abstract-tags >
     
-        <a class="post-tag" href="javascript:void(0);" data-tags = "GTK">GTK</a>
+        <a class="post-tag" href="javascript:void(0);" data-tags = "gtk">gtk</a>
+    
+</div>
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
+        <a class="abstract-title" href = "/2020/03/23/Gtk%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8E%A7%E4%BB%B6%E4%B9%8BGObject%E7%B3%BB%E7%BB%9F/" >
+            
+                <span>Gtk自定义控件(一)GObject系统</span>
+        </a>
+        <div class="abstract-content">
+            GObject是Gtk里非常重要的概念，几乎所有的Gtk代码都涉及到GObject，那到底这是何方神圣以致它在Gtk里应用如此广泛？
+对GObject的初次了解
+总的来说，GObject做的事情是：在c里实现面向对象。
+众所周知，c是面向过程语言，可是可以通过一些手段实现面向对象。
+从面向对象了解
+来看一下这段C++代码
+12345678910111213141516171819202122232425262728#include &lt;iostream&gt;class CircleShape &#123;    constexpr static double PI = 3.1415...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2020/03/23</span>
+            </div>
+            <!-- tags  -->
+            
+            <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "gtk">gtk</a>
+    
+</div>
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
+        <a class="abstract-title" href = "/2020/03/23/Gtk%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8E%A7%E4%BB%B6%E4%B9%8BGcalMonthView%E5%89%96%E6%9E%90/" >
+            
+                <span>Gtk自定义控件(三)GcalMonthView剖析</span>
+        </a>
+        <div class="abstract-content">
+            自定义容器GcalMonthView
+其实最近也没在搞GTK了
+先鸽一下吧，到搞GTK的时候再更新…
+
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2020/03/23</span>
+            </div>
+            <!-- tags  -->
+            
+            <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "gtk">gtk</a>
     
 </div>
             
@@ -689,9 +758,39 @@ MSYS2是在Windows模拟Linux环境的工具，可以用于软件包的管理。
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 19
+        Total : 21
         </div>
         <!-- search  -->
         
@@ -704,6 +803,16 @@ MSYS2是在Windows模拟Linux环境的工具，可以用于软件包的管理。
     
     <div class="archive-year"> 2021 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/15</span><a class="archive-post-title" href= "/2021/02/15/PR%E4%BD%BF%E7%94%A8FFMpeg%E4%BD%9C%E4%B8%BA%E7%BC%96%E7%A0%81%E5%99%A8/" >PR使用FFmpeg作为编码器</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/03</span><a class="archive-post-title" href= "/2021/02/03/%E5%B0%86%E8%99%9A%E6%8B%9F%E6%9C%BAlocalhost%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91%E5%88%B0%E5%AE%BF%E4%B8%BB%E6%9C%BA%E4%B8%8A/" >将虚拟机localhost端口转发到宿主机上</a>
+        </li>
     
     
         <li class="archive-post-item">
@@ -861,6 +970,12 @@ MSYS2是在Windows模拟Linux环境的工具，可以用于软件包的管理。
     
         <span class="sidebar-tag-name" data-tags="torch"><span class="iconfont-archer">&#xe606;</span>torch</span>
     
+        <span class="sidebar-tag-name" data-tags="Premiere"><span class="iconfont-archer">&#xe606;</span>Premiere</span>
+    
+        <span class="sidebar-tag-name" data-tags="FFmpeg"><span class="iconfont-archer">&#xe606;</span>FFmpeg</span>
+    
+        <span class="sidebar-tag-name" data-tags="渗透"><span class="iconfont-archer">&#xe606;</span>渗透</span>
+    
     </div>
     <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
     <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
@@ -914,64 +1029,9 @@ jsonContent:
     
         <span class="sidebar-category-name" data-categories="研究"><span class="iconfont-archer">&#xe60a;</span>研究</span>
     
-    </div>
-    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
-    <div class="sidebar-categories-list"></div>
-</div>
-    </div>
-</div> 
-    <script>
-    var siteMeta = {
-        root: "/",
-        author: "IceSandwich"
-    }
-</script>
-    <!-- CDN failover -->
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
-    <script type="text/javascript">
-        if (typeof window.$ === 'undefined')
-        {
-            console.warn('jquery load from jsdelivr failed, will load local script')
-            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
-        }
-    </script>
-    <script src="/scripts/main.js"></script>
-    <!-- algolia -->
+        <span class="sidebar-category-name" data-categories="FFMPEG"><span class="iconfont-archer">&#xe60a;</span>FFMPEG</span>
     
-    <!-- busuanzi  -->
-    
-    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-    
-    <!-- CNZZ  -->
-    
-    </div>
-    <!-- async load share.js -->
-     
-    </body>
-</html>
-
-
-bar-categories-name">
-    
-        <span class="sidebar-category-name" data-categories="算法原理"><span class="iconfont-archer">&#xe60a;</span>算法原理</span>
-    
-        <span class="sidebar-category-name" data-categories="docker"><span class="iconfont-archer">&#xe60a;</span>docker</span>
-    
-        <span class="sidebar-category-name" data-categories="GTK"><span class="iconfont-archer">&#xe60a;</span>GTK</span>
-    
-        <span class="sidebar-category-name" data-categories="三维重建"><span class="iconfont-archer">&#xe60a;</span>三维重建</span>
-    
-        <span class="sidebar-category-name" data-categories="gtk"><span class="iconfont-archer">&#xe60a;</span>gtk</span>
-    
-        <span class="sidebar-category-name" data-categories="BundleFusion"><span class="iconfont-archer">&#xe60a;</span>BundleFusion</span>
-    
-        <span class="sidebar-category-name" data-categories="算法"><span class="iconfont-archer">&#xe60a;</span>算法</span>
-    
-        <span class="sidebar-category-name" data-categories="脚本"><span class="iconfont-archer">&#xe60a;</span>脚本</span>
-    
-        <span class="sidebar-category-name" data-categories="硬件"><span class="iconfont-archer">&#xe60a;</span>硬件</span>
-    
-        <span class="sidebar-category-name" data-categories="研究"><span class="iconfont-archer">&#xe60a;</span>研究</span>
+        <span class="sidebar-category-name" data-categories="渗透"><span class="iconfont-archer">&#xe60a;</span>渗透</span>
     
     </div>
     <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
